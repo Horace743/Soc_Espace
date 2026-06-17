@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rapports – SOC_Espace</title>
+<link rel="stylesheet" href="../static/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+<canvas id="matrixCanvas"></canvas>
+<nav class="dash-nav">
+  <div class="nav-brand">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+    SOC_Espace
+  </div>
+  <div class="nav-center">
+    <span class="nav-clock" id="navClock">--:--:--</span>
+    <span id="navDate">--/--/----</span>
+  </div>
+  <div class="nav-right">
+    <span class="nav-user" id="navUser">👤 --</span>
+    <span class="nav-role" id="navRole">--</span>
+    <a href="#" class="nav-logout" onclick="logout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Déconnexion
+    </a>
+  </div>
+</nav>
+<div class="dash-layout">
+<aside class="dash-sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-title">NAVIGATION</div>
+    <a href="dashboard-root.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Vue d'ensemble</a>
+    <a href="scanner.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Scanner Web</a>
+    <a href="ids.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> IDS / Détection</a>
+    <a href="users.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Utilisateurs</a>
+    <a href="crypto.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Audit Crypto</a>
+    <a href="malware.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Analyse Malware</a>
+    <a href="reports.html" class="sidebar-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Rapports</a>
+    <a href="logs.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Journal</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-title">STATUT SYSTÈME</div>
+    <div class="sys-stat"><span>CPU</span><div class="mini-bar"><div class="mini-fill" id="cpuBar" style="width:34%"></div></div><span id="cpuVal">34%</span></div>
+    <div class="sys-stat"><span>RAM</span><div class="mini-bar"><div class="mini-fill" style="width:58%"></div></div><span>58%</span></div>
+    <div class="sys-stat"><span>NET</span><div class="mini-bar"><div class="mini-fill warn" style="width:72%"></div></div><span>72%</span></div>
+  </div>
+</aside>
+<main class="dash-content">
+<div class="tool-header">
+  <div class="tool-header-icon">📊</div>
+  <div>
+    <div class="tool-title">Rapports & Statistiques</div>
+    <div class="tool-sub">Vue consolidée · Statistiques de sécurité · Export des données</div>
+  </div>
+</div>
+
+<div class="stats-row" id="kpiRow">
+  <div class="stat-card"><div class="stat-icon">📋</div><div><div class="stat-num" id="kpi-logs">0</div><div class="stat-label">Événements totaux</div></div></div>
+  <div class="stat-card"><div class="stat-icon">⚠</div><div><div class="stat-num red" id="kpi-errors">0</div><div class="stat-label">Erreurs / Échecs</div></div></div>
+  <div class="stat-card"><div class="stat-icon">🛡</div><div><div class="stat-num yellow" id="kpi-alerts">0</div><div class="stat-label">Alertes IDS</div></div></div>
+  <div class="stat-card"><div class="stat-icon">👥</div><div><div class="stat-num cyan" id="kpi-users">0</div><div class="stat-label">Comptes actifs</div></div></div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;">
+  <div class="tool-card">
+    <div class="tool-card-title">RÉPARTITION DES ÉVÉNEMENTS</div>
+    <div id="eventDistribution"><div style="color:rgba(0,255,65,0.3);font-size:0.75rem;">Aucun événement.</div></div>
+  </div>
+  <div class="tool-card">
+    <div class="tool-card-title">ALERTES IDS PAR SÉVÉRITÉ</div>
+    <div id="alertDistribution"><div style="color:rgba(0,255,65,0.3);font-size:0.75rem;">Aucune alerte.</div></div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+    <div class="tool-card-title" style="margin:0;">DERNIERS ÉVÉNEMENTS (20)</div>
+    <button class="btn-scan" style="padding:8px 16px;font-size:0.7rem;" onclick="exportCSV()">⬇ EXPORTER CSV</button>
+  </div>
+  <div id="reportLogs"><div style="color:rgba(0,255,65,0.3);font-size:0.75rem;">Chargement…</div></div>
+</div>
+</main>
+</div>
+<div class="terminal-panel collapsed" id="terminalPanel">
+  <div class="terminal-header">
+    <div class="terminal-dots">
+      <span class="tdot tred"></span>
+      <span class="tdot tyellow"></span>
+      <span class="tdot tgreen"></span>
+    </div>
+    <span class="terminal-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+      Terminal de Sécurité – SOC_Espace
+    </span>
+    <button class="terminal-toggle" id="terminalToggle">▲</button>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-journal" onclick="switchTab('journal')">📜 Journal</button>
+    <button class="tab-btn" id="tab-terminal" onclick="switchTab('terminal')">💻 Terminal root</button>
+  </div>
+  <div class="tab-content active" id="journalTab">
+    <div class="log-output" id="logOutput"></div>
+  </div>
+  <div class="tab-content" id="terminalTab">
+    <div class="term-output" id="termOutput"></div>
+    <div class="term-input-line">
+      <span class="term-prompt" id="termPrompt">$</span>
+      <input type="text" id="termInput" class="term-input" placeholder="commande…" disabled autocomplete="off" spellcheck="false">
+    </div>
+  </div>
+</div>
+<script src="../static/js/script.js"></script>
+<script>
+(function(){
+  if(!requireAuth('any')) return;
+  loadNavUser();
+  updateClock(); setInterval(updateClock, 1000);
+})();
+</script>
+<script>
+function makeBar(label, value, max, color) {
+  const pct = max>0 ? Math.round((value/max)*100) : 0;
+  return `<div style="margin-bottom:12px;">
+    <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:0.72rem;color:var(--green-muted);margin-bottom:4px;"><span>${label}</span><span>${value}</span></div>
+    <div style="height:6px;background:rgba(0,255,65,0.1);"><div style="height:100%;width:${pct}%;background:${color};transition:width 0.6s;"></div></div>
+  </div>`;
+}
+
+function loadReport() {
+  const data = getReportData();
+  document.getElementById('kpi-logs').textContent   = data.totalLogs;
+  document.getElementById('kpi-errors').textContent = data.byType.error;
+  document.getElementById('kpi-alerts').textContent = data.totalAlerts;
+  document.getElementById('kpi-users').textContent  = data.totalUsers;
+
+  const maxType = Math.max(...Object.values(data.byType), 1);
+  const typeColors = {success:'var(--green)',error:'var(--red)',warn:'var(--yellow)',info:'var(--cyan)'};
+  const typeLabels = {success:'Succès',error:'Erreurs',warn:'Alertes',info:'Infos'};
+  document.getElementById('eventDistribution').innerHTML = Object.entries(data.byType)
+    .map(([k,v])=>makeBar(typeLabels[k]||k, v, maxType, typeColors[k]||'var(--green)')).join('') || '<div style="color:rgba(0,255,65,0.3);font-size:0.75rem;">Aucun événement.</div>';
+
+  const maxSev = Math.max(...Object.values(data.bySeverity), 1);
+  const sevColors = {critical:'var(--red)',high:'var(--orange)',medium:'var(--yellow)',low:'var(--green)'};
+  document.getElementById('alertDistribution').innerHTML = Object.entries(data.bySeverity)
+    .map(([k,v])=>makeBar(k.charAt(0).toUpperCase()+k.slice(1), v, maxSev, sevColors[k]||'var(--green)')).join('') || '<div style="color:rgba(0,255,65,0.3);font-size:0.75rem;">Aucune alerte.</div>';
+
+  const el = document.getElementById('reportLogs');
+  if (!data.recentLogs.length) { el.innerHTML='<div style="color:rgba(0,255,65,0.3);font-size:0.75rem;">Aucun événement.</div>'; return; }
+  el.innerHTML = `<table class="data-table"><thead><tr><th>DATE / HEURE</th><th>TYPE</th><th>UTILISATEUR</th><th>ÉVÉNEMENT</th></tr></thead><tbody>
+    ${data.recentLogs.map(l=>`<tr><td style="white-space:nowrap;">${l.date}</td><td><span class="log-type-badge ${l.type}">${(l.type||'info').toUpperCase()}</span></td><td>${l.username||'—'}</td><td>${l.message}</td></tr>`).join('')}
+  </tbody></table>`;
+}
+
+function exportCSV() {
+  const rows = [['Date','Type','Utilisateur','Message']];
+  LOGS.forEach(l=>rows.push([l.date,l.type,l.username||'—',l.message]));
+  const csv  = rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('
+');
+  const blob = new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'});
+  const a    = Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:'soc_rapport.csv'});
+  a.click();
+}
+
+loadReport();
+setInterval(loadReport, 5000);
+</script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audit Crypto – SOC_Espace</title>
+<link rel="stylesheet" href="../static/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+<canvas id="matrixCanvas"></canvas>
+<nav class="dash-nav">
+  <div class="nav-brand">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+    SOC_Espace
+  </div>
+  <div class="nav-center">
+    <span class="nav-clock" id="navClock">--:--:--</span>
+    <span id="navDate">--/--/----</span>
+  </div>
+  <div class="nav-right">
+    <span class="nav-user" id="navUser">👤 --</span>
+    <span class="nav-role" id="navRole">--</span>
+    <a href="#" class="nav-logout" onclick="logout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Déconnexion
+    </a>
+  </div>
+</nav>
+<div class="dash-layout">
+<aside class="dash-sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-title">NAVIGATION</div>
+    <a href="dashboard-root.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> Vue d'ensemble</a>
+    <a href="scanner.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Scanner Web</a>
+    <a href="ids.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> IDS / Détection</a>
+    <a href="users.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Utilisateurs</a>
+    <a href="crypto.html" class="sidebar-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Audit Crypto</a>
+    <a href="malware.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Analyse Malware</a>
+    <a href="reports.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Rapports</a>
+    <a href="logs.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Journal</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-title">STATUT SYSTÈME</div>
+    <div class="sys-stat"><span>CPU</span><div class="mini-bar"><div class="mini-fill" id="cpuBar" style="width:34%"></div></div><span id="cpuVal">34%</span></div>
+    <div class="sys-stat"><span>RAM</span><div class="mini-bar"><div class="mini-fill" style="width:58%"></div></div><span>58%</span></div>
+    <div class="sys-stat"><span>NET</span><div class="mini-bar"><div class="mini-fill warn" style="width:72%"></div></div><span>72%</span></div>
+  </div>
+</aside>
+<main class="dash-content">
+<div class="tool-header">
+  <div class="tool-header-icon">🔐</div>
+  <div>
+    <div class="tool-title">Audit Cryptographie</div>
+    <div class="tool-sub">Vérification SSL/TLS · Certificats · Protocoles · En-têtes de sécurité</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-card-title">ANALYSER UN DOMAINE</div>
+  <div class="input-row">
+    <input type="text" id="cryptoUrl" class="tool-input" placeholder="https://exemple.com  ou  exemple.com">
+    <button class="btn-scan" id="btnCrypto" onclick="doCryptoAudit()">▶ AUDITER</button>
+  </div>
+  <p style="font-size:0.72rem;color:rgba(0,255,65,0.35);margin-top:8px;">Analyse : protocole HTTP/HTTPS, en-têtes de sécurité, redirections, cookies.</p>
+</div>
+
+<div id="cryptoProgress" style="display:none;" class="tool-card">
+  <div class="tool-card-title">AUDIT EN COURS…</div>
+  <div id="cryptoProgressLog" style="font-family:var(--font-mono);font-size:0.8rem;color:var(--green-muted);line-height:1.8;"></div>
+</div>
+
+<div id="cryptoResults" style="display:none;" class="tool-card">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+    <div class="tool-card-title" style="margin:0;">RAPPORT D'AUDIT</div>
+    <div id="cryptoGrade" style="font-family:var(--font-display);font-size:1.4rem;color:var(--green);"></div>
+  </div>
+  <div id="cryptoDetails"></div>
+</div>
+</main>
+</div>
+<div class="terminal-panel collapsed" id="terminalPanel">
+  <div class="terminal-header">
+    <div class="terminal-dots">
+      <span class="tdot tred"></span>
+      <span class="tdot tyellow"></span>
+      <span class="tdot tgreen"></span>
+    </div>
+    <span class="terminal-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+      Terminal de Sécurité – SOC_Espace
+    </span>
+    <button class="terminal-toggle" id="terminalToggle">▲</button>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-journal" onclick="switchTab('journal')">📜 Journal</button>
+    <button class="tab-btn" id="tab-terminal" onclick="switchTab('terminal')">💻 Terminal root</button>
+  </div>
+  <div class="tab-content active" id="journalTab">
+    <div class="log-output" id="logOutput"></div>
+  </div>
+  <div class="tab-content" id="terminalTab">
+    <div class="term-output" id="termOutput"></div>
+    <div class="term-input-line">
+      <span class="term-prompt" id="termPrompt">$</span>
+      <input type="text" id="termInput" class="term-input" placeholder="commande…" disabled autocomplete="off" spellcheck="false">
+    </div>
+  </div>
+</div>
+<script src="../static/js/script.js"></script>
+<script>
+(function(){
+  if(!requireAuth('any')) return;
+  loadNavUser();
+  updateClock(); setInterval(updateClock, 1000);
+})();
+</script>
+<script>
+const cryptoSteps = [
+  'Résolution DNS…','Tentative de connexion HTTPS…',
+  'Vérification du certificat SSL…','Analyse des en-têtes de sécurité…',
+  'Vérification des cookies sécurisés…','Analyse des redirections HTTP→HTTPS…',
+  'Compilation du rapport…'
+];
+async function doCryptoAudit() {
+  let url = document.getElementById('cryptoUrl').value.trim();
+  if (!url) { alert('Entrez un domaine ou une URL.'); return; }
+  document.getElementById('btnCrypto').disabled = true;
+  document.getElementById('cryptoProgress').style.display = 'block';
+  document.getElementById('cryptoResults').style.display = 'none';
+  const log = document.getElementById('cryptoProgressLog');
+  log.innerHTML = '';
+  for (let s of cryptoSteps) {
+    await new Promise(r => setTimeout(r, 380));
+    log.innerHTML += `<div>▸ ${s}</div>`;
+  }
+  const data = runCryptoAudit(url);
+  document.getElementById('cryptoProgress').style.display = 'none';
+  document.getElementById('cryptoResults').style.display = 'block';
+  const gradeColors = {'A+':'var(--green)','A':'var(--green)','B+':'var(--cyan)','B':'var(--cyan)','C':'var(--yellow)','F':'var(--red)'};
+  document.getElementById('cryptoGrade').innerHTML = `Grade : <span style="color:${gradeColors[data.grade]||'var(--yellow)'}">${data.grade}</span>`;
+  document.getElementById('cryptoDetails').innerHTML = data.checks.map(c => `
+    <div class="result-item ${c.severity}">
+      <span class="severity-badge ${c.severity}">${c.ok ? '✓ OK' : '✗ FAIL'}</span>
+      <div class="result-type">${c.label}</div>
+      <div class="result-detail">${c.detail}</div>
+    </div>`).join('');
+  document.getElementById('btnCrypto').disabled = false;
+}
+</script>
+</body>
+</html>
